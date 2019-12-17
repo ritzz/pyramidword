@@ -1,0 +1,18 @@
+﻿@page
+@model PyramidString.Models.PyramidStringModel
+@{
+    ViewData["Title"] = "Home page";
+}
+
+    <div class="text-center">
+        @*<h1 class="display-1">Welcome</h1>
+        <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>*@
+        <p style="left">Enter the string to check if it is Pyramid:</p>
+        @Html.TextBoxFor(m => m.InputString, null, new { @class = "form-control" })
+        @using (Html.BeginForm("PyramidWord", "Index", FormMethod.Post))
+        {
+
+        }
+        @*<p class="display-1">@Model.OutputString</p>*@
+
+    </div>
