@@ -1,50 +1,64 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
-using PyramidString.Models;
 
 namespace PyramidString.Pages
 {
-    public class PageController : Controller
+    public class IndexModel : PageModel
     {
         private readonly ILogger<Index> _logger;
-
-        public PageController(ILogger<Index> logger)
+        [BindProperty(SupportsGet = true)]
+        public string InputString { get; set; }
+        [BindProperty(SupportsGet = true)]
+        public bool OutputString { get; set; }
+        public IndexModel(ILogger<Index> logger)
         {
             _logger = logger;
         }
 
-        public void onGet()
+        public void OnGet()
         {
-
+            if (!String.IsNullOrWhiteSpace(InputString))
+            {
+                OutputString = isPyramidWord(InputString);
+                ViewData["OutputString"] = OutputString;
+            }
         }
 
-        [HttpPost]
-        public ActionResult PyramidWord(PyramidStringModel u)
-        {
-            u.OutputString = IsPyramidWord(u.InputString);
-            return RedirectToAction("View");
-        }
 
-        bool IsPyramidWord(string str)
+        bool isPyramidWord(string str)
         {
             Dictionary<int, List<char>> mpFreqToCharSet = new Dictionary<int, List<char>>();
             Dictionary<char, int> mpCharFreq = new Dictionary<char, int>();
             int maxFreq = 0;
             foreach (var c in str)
             {
-                int newFreq = mpCharFreq[c] + 1;
+                int newFreq = 1;
+                if (mpCharFreq.ContainsKey(c))
+                {
+                    newFreq = mpCharFreq[c] + 1;
+                }
+                else
+                {
+                    mpCharFreq.Add(c, 1);
+                }
                 //remove character from old frequency (Avg. case O(1))
-                if (mpFreqToCharSet[newFreq - 1].Count(x=>x == c) > 0)
+                if (mpFreqToCharSet.ContainsKey(newFreq - 1) && mpFreqToCharSet[newFreq - 1].Count(x=>x == c) > 0)
                 {
                     mpFreqToCharSet[newFreq - 1].Remove(c);
                 }
                 //insert character to new frequency (Avg. case O(1))
-                mpFreqToCharSet[newFreq].Add(c);
+                if (!mpFreqToCharSet.ContainsKey(newFreq))
+                {
+                    mpFreqToCharSet.Add(newFreq, new List<char> { c });
+                }
+                else {
+                    mpFreqToCharSet[newFreq].Add(c);
+                }
                 //update character frequency map
                 mpCharFreq[c] = newFreq;
                 maxFreq = Math.Max(maxFreq, newFreq);
