@@ -9,27 +9,28 @@ using PyramidString.Models;
 
 namespace PyramidString.Pages
 {
-    public class Index : Controller
+    public class PageController : Controller
     {
         private readonly ILogger<Index> _logger;
 
-        public Index(ILogger<Index> logger)
+        public PageController(ILogger<Index> logger)
         {
             _logger = logger;
         }
 
-        public void OnGet()
+        public void onGet()
         {
 
         }
 
         [HttpPost]
-        public void PyramidWord(PyramidStringModel u)
+        public ActionResult PyramidWord(PyramidStringModel u)
         {
-            u.OutputString =  isPyramidWord(u.InputString);            
+            u.OutputString = IsPyramidWord(u.InputString);
+            return RedirectToAction("View");
         }
 
-        bool isPyramidWord(string str)
+        bool IsPyramidWord(string str)
         {
             Dictionary<int, List<char>> mpFreqToCharSet = new Dictionary<int, List<char>>();
             Dictionary<char, int> mpCharFreq = new Dictionary<char, int>();
